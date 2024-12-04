@@ -172,7 +172,7 @@ class IvfTrain:
         # np.random.seed(42)
 
         # Number of clusters
-        n_clusters = 1000
+        n_clusters = 10000
         print("Starting kmeans")
         # Initialize and fit MiniBatchKMeans
         mbk = MiniBatchKMeans(n_clusters=n_clusters, batch_size=10000)

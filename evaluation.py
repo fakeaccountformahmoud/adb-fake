@@ -103,7 +103,7 @@ def get_actual_ids_first_k(actual_sorted_ids, k):
     return [[id for id in actual_sorted_ids_one_q if id < k] for actual_sorted_ids_one_q in actual_sorted_ids]
 
 if __name__ == "__main__":
-    db = VecDB(db_size = 20000000, new_db = False)
+    db = VecDB(db_size = 20000000, new_db = True)
 
     needed_top_k = 10000
     rng = np.random.default_rng(10)

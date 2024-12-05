@@ -172,10 +172,12 @@ class VecDB:
             #     #print(ranged_clusters)
             #     del ranged_clusters
             ranged_clusters = self.get_multiple_rows(ranged_clusters_ids)
+            best_vectors = []
             for row in ranged_clusters:
                 cosine_similarity = self._cal_score(query, row[0])
                 #print(cosine_similarity, "/n")
-                top_k_results.append((cosine_similarity, row[1]))
+                best_vectors.append((cosine_similarity, row[1]))
+            top_k_results.extend(sorted(best_vectors, key=lambda x: x[0], reverse=True)[:min(top_k, len(ranged_clusters_ids))])
         # print(len(top_k_results))
         scores = sorted(top_k_results, key=lambda x: x[0], reverse=True)[:top_k]
         # print([s[1] for s in scores])

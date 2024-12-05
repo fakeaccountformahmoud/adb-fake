@@ -104,7 +104,7 @@ class VecDB:
         scores = []
         
         centroids = []
-        file = open(f"{self.general_path}\\saved_centroids.dat", 'rb')
+        file = open(f"{self.general_path}/saved_centroids.dat", 'rb')
         try:
             row_size = ELEMENT_SIZE * (DIMENSION + 1)
             data = file.read()
@@ -128,7 +128,7 @@ class VecDB:
         top_k_results = []
         for score in scores:
             first_index, second_index = None, None
-            file = open(f"{self.general_path}\\saved_indexes.dat", 'rb')
+            file = open(f"{self.general_path}/saved_indexes.dat", 'rb')
             try:
                 position = 3 * score * ELEMENT_SIZE
                 file.seek(int(position))
@@ -142,7 +142,7 @@ class VecDB:
                 file.close()
                 del file
             ranged_clusters_ids = []
-            with open(f"{self.general_path}\\saved_clusters.dat", 'rb') as file:
+            with open(f"{self.general_path}/saved_clusters.dat", 'rb') as file:
                 file.seek(first_index)
                 while file.tell() < second_index:
                     packed_data = file.read(2 * ELEMENT_SIZE)

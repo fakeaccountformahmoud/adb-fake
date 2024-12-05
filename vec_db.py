@@ -2,14 +2,15 @@ from typing import Dict, List, Annotated
 import numpy as np
 import os
 import struct
-from IvfTrain import IvfTrain
+import gc
+#from IvfTrain import IvfTrain
 
 DB_SEED_NUMBER = 42
 ELEMENT_SIZE = np.dtype(np.float32).itemsize
 DIMENSION = 70
 
 class VecDB:
-    def __init__(self, database_file_path = "saved_db.dat", index_file_path =  ["saved_clusters.dat", "saved_centroids.dat", "saved_indexes.dat"], new_db = True, db_size = None) -> None:
+    def __init__(self, database_file_path = "saved_db.dat", index_file_path =  ["/content/adb-fake/saved_clusters.dat", "/content/adb-fake/saved_centroids.dat", "/content/adb-fake/saved_indexes.dat"], new_db = True, db_size = None) -> None:
         self.db_path = database_file_path
         self.cluster_path = index_file_path[0]
         self.centroid_path = index_file_path[1]
@@ -23,6 +24,7 @@ class VecDB:
             if os.path.exists(self.db_path):
                 os.remove(self.db_path)
             self.generate_database(db_size)
+        
     
     def generate_database(self, size: int) -> None:
         rng = np.random.default_rng(DB_SEED_NUMBER)
@@ -80,15 +82,18 @@ class VecDB:
                 unpacked_data = struct.unpack(f'{DIMENSION}f', packed_data)
                 del packed_data
                 ranged_clusters.append([unpacked_data, id[1]])
+                
             file.close()
             del file
+            
+        
         return ranged_clusters
     
     def retrieve(self, query: Annotated[np.ndarray, (1, DIMENSION)], top_k = 5):
         scores = []
         
         centroids = []
-        file = open(self.centroid_path, 'rb')
+        file = open("/content/adb-fake/saved_centroids.dat", 'rb')
         try:
             row_size = ELEMENT_SIZE * (DIMENSION + 1)
             data = file.read()
@@ -102,12 +107,15 @@ class VecDB:
                 #print(len(packed_data), row_size)
                 unpacked_data = struct.unpack(f'i{DIMENSION}f', packed_data)
                 del packed_data
+                
                 centroids.append(unpacked_data)
             #print(cnt)
+            
         finally:
             # Ensure the file is properly closed
             file.close()
             del file
+            
         #print("lol")
         centroids = np.array(centroids)
         # Calculate the dot product between centroids and the query vector
@@ -118,13 +126,13 @@ class VecDB:
 
         del sorted_indices
         
-        scores = best_centroids[:top_k]
+        scores = best_centroids[:4]
         del best_centroids
         # print(scores)
         top_k_results = []
         for score in scores:
             first_index, second_index = None, None
-            file = open(self.index_path, 'rb')
+            file = open("/content/adb-fake/saved_indexes.dat", 'rb')
             # print(os.path.getsize(self.index_path) // (DIMENSION * ELEMENT_SIZE))
             try:
                 # Calculate the byte position based on the score
@@ -146,12 +154,14 @@ class VecDB:
                 unpacked_data = struct.unpack('iii', packed_data)
                 del packed_data
                 first_index, second_index = unpacked_data[1], unpacked_data[2]
+                
             finally:
                 # Ensure the file is properly closed
                 file.close()
                 del file
+                
             ranged_clusters_ids = []
-            with open(self.cluster_path, 'rb') as file:
+            with open("/content/adb-fake/saved_clusters.dat", 'rb') as file:
                 file.seek(first_index)
                 while file.tell() < second_index:
                     packed_data = file.read(2 * ELEMENT_SIZE)
@@ -161,10 +171,13 @@ class VecDB:
                     del packed_data
                     # print(data)
                     ranged_clusters_ids.append(data)
+                    
                 file.close()
                 del file
+                
             
             ranged_clusters = self.get_multiple_rows(ranged_clusters_ids)              #take care
+            
             #print(ranged_clusters)
             #ranged_clusters = np.array(ranged_clusters)
             # Compute cosine similarities between the embeddings and the query
@@ -177,6 +190,7 @@ class VecDB:
             for row in ranged_clusters:
                 cosine_similarity = self._cal_score(query, row[0])
                 cosine_similarities.append((cosine_similarity, row[1]))
+            
 
             # print(cosine_similarities)
             # Get the top-k vectors with the highest similarity scores
@@ -185,9 +199,11 @@ class VecDB:
             # Concatenate the top results from all regions
             top_k_results.extend(cosine_similarities)
             del cosine_similarities
+            
         #print(np.array(top_k_results).shape)
         print(len(top_k_results))
         scores = sorted(top_k_results, key=lambda x: x[0], reverse=True)[:top_k]
+        gc.collect()
         return [s[1] for s in scores]
     
     def _cal_score(self, vec1, vec2):

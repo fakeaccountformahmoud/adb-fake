@@ -4,7 +4,7 @@ import os
 import struct
 from IvfTrain import IvfTrain
 #from itertools import chain
-from memory_profiler import memory_usage,profile
+
 DB_SEED_NUMBER = 42
 ELEMENT_SIZE = np.dtype(np.float32).itemsize
 DIMENSION = 70
@@ -99,7 +99,7 @@ class VecDB:
     def ceil(self, x):
         integer_part = x - (x % 1)  # Extract integer part
         return integer_part + (1 if x % 1 > 0 else 0)
-    @profile
+    
     def retrieve(self, query: Annotated[np.ndarray, (1, DIMENSION)], top_k = 5):
         scores = []
         

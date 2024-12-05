@@ -124,7 +124,7 @@ class VecDB:
 
         del sorted_indices
         
-        if self.db_size == 20000000:
+        if self._get_num_records() == 20000000:
             scores = best_centroids[:3]
         else:
             scores = best_centroids[:20]

@@ -123,7 +123,7 @@ class VecDB:
 
         del sorted_indices
         
-        scores = best_centroids[:20]
+        scores = best_centroids[:top_k]
         del best_centroids
         top_k_results = []
         for score in scores:

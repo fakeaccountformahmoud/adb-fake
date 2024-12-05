@@ -14,6 +14,7 @@ class VecDB:
         self.db_path = database_file_path
         self.general_path = index_file_path
         self.size = 2
+        self.db_size = db_size
         # print(index_file_path[0])
         # print(index_file_path[1])
         # print(index_file_path[2])
@@ -123,7 +124,10 @@ class VecDB:
 
         del sorted_indices
         
-        scores = best_centroids[:top_k]
+        if self.db_size == 20000000:
+            scores = best_centroids[:top_k]
+        else:
+            scores = best_centroids[:20]
         del best_centroids
         top_k_results = []
         for score in scores:

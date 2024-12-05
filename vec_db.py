@@ -125,7 +125,7 @@ class VecDB:
         del sorted_indices
         
         if self._get_num_records() == 20000000:
-            scores = best_centroids[:3]
+            scores = best_centroids[:1]
         else:
             scores = best_centroids[:20]
         del best_centroids

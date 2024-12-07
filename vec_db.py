@@ -138,7 +138,7 @@ class VecDB:
         
         # Extract the sorted indices of the top 60 centroids
         best_centroids = [item[1] for item in top_60_centroids]
-        del best_centroids
+        
         del top_60_centroids
         #del sorted_indices
         

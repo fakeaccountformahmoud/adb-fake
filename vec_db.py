@@ -128,9 +128,9 @@ class VecDB:
             #print(top_k)
             scores = best_centroids[:10]
         elif self._get_num_records() == 15000000:
-            scores = best_centroids[:25]
+            scores = best_centroids[:40]
         elif self._get_num_records() == 10000000:
-            scores = best_centroids[:30]
+            scores = best_centroids[:40]
         else:
             scores = best_centroids[:50]
         del best_centroids

@@ -140,7 +140,7 @@ class VecDB:
         best_centroids = [item[1] for item in top_60_centroids]
         del best_centroids
         del top_60_centroids
-        del sorted_indices
+        #del sorted_indices
         
         if self._get_num_records() == 20000000:
             #print(top_k)

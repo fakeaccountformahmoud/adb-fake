@@ -182,7 +182,8 @@ class VecDB:
                 cosine_similarity = self._cal_score(query, row[0])
                 #print(cosine_similarity, "/n")
                 best_vectors.append((cosine_similarity, row[1]))
-            top_k_results.extend(sorted(best_vectors, key=lambda x: x[0], reverse=True)[:min(top_k, len(ranged_clusters_ids))])
+            length = len(ranged_clusters_ids)
+            top_k_results.extend(sorted(best_vectors, key=lambda x: x[0], reverse=True)[:min(top_k, length)])
         # print(len(top_k_results))
         scores = sorted(top_k_results, key=lambda x: x[0], reverse=True)[:top_k]
         # print([s[1] for s in scores])

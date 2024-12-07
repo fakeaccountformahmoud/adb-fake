@@ -185,6 +185,8 @@ class VecDB:
                 best_vectors.add((cosine_similarity, row[1]))
             length = len(ranged_clusters_ids)
             top_k_results.extend(best_vectors[:min(top_k, length)])
+            del length
+            del best_vectors
         # print(len(top_k_results))
         scores = sorted(top_k_results, key=lambda x: x[0], reverse=True)[:top_k]
         # print([s[1] for s in scores])

@@ -125,6 +125,7 @@ class VecDB:
         del sorted_indices
         
         if self._get_num_records() == 20000000:
+            print(top_k)
             scores = best_centroids[:top_k]
         else:
             scores = best_centroids[:20]

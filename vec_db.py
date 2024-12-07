@@ -128,7 +128,7 @@ class VecDB:
             #print(top_k)
             scores = best_centroids[:top_k]
         else:
-            scores = best_centroids[:20]
+            scores = best_centroids[:10]
         del best_centroids
         top_k_results = []
         for score in scores:

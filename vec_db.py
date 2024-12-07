@@ -120,9 +120,26 @@ class VecDB:
             file.close()
             del file
         centroids = np.array(centroids)
-        sorted_indices = np.argsort((np.dot(centroids[:, 1:], query.T).T / (np.linalg.norm(centroids[:, 1:], axis=1) * np.linalg.norm(query))).squeeze())[::-1]
-        best_centroids = sorted_indices.tolist()
-
+        query = np.array(query)
+        
+        # Create a SortedList to hold the top 60 centroids, sorted by score in descending order
+        top_60_centroids = SortedList(key=lambda x: -x[0])  # Sort by the score in descending order
+        
+        # Calculate scores for each centroid
+        for i, centroid in enumerate(centroids):
+            score = np.dot(centroid[1:], query.T) / (np.linalg.norm(centroid[1:]) * np.linalg.norm(query))
+            if len(top_60_centroids) < 60:
+                top_60_centroids.add((score, i))  # Add score and index
+            else:
+                # Add only if the score is higher than the smallest in the current list
+                if score > -top_60_centroids[-1][0]:
+                    top_60_centroids.add((score, i))
+                    top_60_centroids.pop()  # Remove the smallest element to maintain size 60
+        
+        # Extract the sorted indices of the top 60 centroids
+        best_centroids = [item[1] for item in top_60_centroids]
+        del best_centroids
+        del top_60_centroids
         del sorted_indices
         
         if self._get_num_records() == 20000000:
